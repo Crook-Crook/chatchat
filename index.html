@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoverLiveLeakChat</title>
+    <style>
+        body { font-family: Comic Sans MS, sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; background:#f0f0f0; }
+        .chat-container { width: 400px; background: #fff; border-radius: 5px; padding: 10px; display: flex; flex-direction: column; height: 500px; }
+        .messages { flex: 1; overflow-y: auto; margin-bottom: 10px; border: 1px solid #ddd; padding: 5px; border-radius: 5px; }
+        .message { padding: 5px; margin-bottom: 5px; border-radius: 5px; background-color: #ffb6c1; }
+        .input-container { display: flex; }
+        input[type="text"] { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ccc; }
+        button { padding: 10px 15px; margin-left: 5px; border-radius: 5px; border: none; background-color: #ffb6c1; color: white; cursor: pointer; }
+        button:hover { background-color: #FFC0CB; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="messages" id="messages"></div>
+        <div class="input-container">
+            <input type="text" id="messageInput" placeholder="Say smth you jerk">
+            <button onclick="sendMessage()">CLICK ME NAAAAWHH</button>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const messagesContainer = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text) return;
+            socket.emit('chat message', text);
+            messageInput.value = '';
+        }
+
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        socket.on('chat message', (msg) => {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.textContent = msg;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+    </script>
+</body>
+</html>
